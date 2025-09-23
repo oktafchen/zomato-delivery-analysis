@@ -26,21 +26,18 @@ df = load_data()
 # =========================
 st.sidebar.header("Filters")
 selected_city = st.sidebar.selectbox("Select City", options=["All"] + sorted(df['City'].unique().tolist()))
-selected_cuisine = st.sidebar.selectbox("Select Cuisine", options=["All"] + sorted(df['Cuisines'].unique().tolist()))
 
 filtered_df = df.copy()
 if selected_city != "All":
     filtered_df = filtered_df[filtered_df['City'] == selected_city]
-if selected_cuisine != "All":
-    filtered_df = filtered_df[filtered_df['Cuisines'] == selected_cuisine]
 
 # =========================
 # Tabs
 # =========================
 st.title("🍽️ Zomato Insights Dashboard")
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(
-    ["📌 Overview", "📊 EDA", "🏙️ City Analysis", "🍜 Cuisine Analysis", "🗺️ Map"]
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["📌 Overview", "📊 EDA", "🏙️ City Analysis", "🗺️ Map"]
 )
 
 # =========================
@@ -95,27 +92,9 @@ with tab3:
     st.plotly_chart(fig_city_rating)
 
 # =========================
-# Tab 4: Cuisine Analysis
-# =========================
-with tab4:
-    st.header("Cuisine Analysis")
-    
-    cuisine_count = df['Cuisines'].value_counts().reset_index()
-    cuisine_count.columns = ['Cuisine', 'Count']
-    fig_cuisine = px.bar(cuisine_count.head(10), x="Cuisine", y="Count",
-                         title="Top 10 Cuisines")
-    st.plotly_chart(fig_cuisine)
-
-    cuisine_rating = df.groupby("Cuisines")['Aggregate rating'].mean().reset_index()
-    fig_cuisine_rating = px.bar(cuisine_rating.sort_values("Aggregate rating", ascending=False).head(10),
-                                x="Cuisines", y="Aggregate rating",
-                                title="Top 10 Cuisines by Average Rating")
-    st.plotly_chart(fig_cuisine_rating)
-
-# =========================
 # Tab 5: Map
 # =========================
-with tab5:
+with tab4:
     if "Latitude" in df.columns and "Longitude" in df.columns:
         st.header("Restaurant Map")
         st.map(filtered_df[['Latitude', 'Longitude']].dropna())
