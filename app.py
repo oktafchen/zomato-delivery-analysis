@@ -60,17 +60,12 @@ with tab1:
 with tab2:
     st.header("Exploratory Data Analysis")
     
-    fig_rating = px.histogram(filtered_df, x="Aggregate rating", nbins=20,
-                              title="Distribusi Rating Restoran")
+    fig_rating = px.histogram(filtered_df, x="Delivery_person_Ratings", nbins=20,
+                              title="Distribusi Rating Kurir",  labels={"Delivery_person_Ratings": "Kurir Ratings"})
     st.plotly_chart(fig_rating)
 
-    if "Average Cost for two" in filtered_df.columns:
-        fig_price = px.histogram(filtered_df, x="Average Cost for two", nbins=30,
-                                 title="Distribusi Biaya Rata-rata untuk 2 Orang")
-        st.plotly_chart(fig_price)
-
-    if "Time_taken" in filtered_df.columns:
-        fig_time = px.histogram(filtered_df, x="Time_taken", nbins=20,
+    if "Time_taken (min)" in filtered_df.columns:
+        fig_time = px.histogram(filtered_df, x="Time_taken (min)", nbins=20,
                                 title="Distribusi Waktu Pengiriman (menit)")
         st.plotly_chart(fig_time)
 
@@ -86,8 +81,8 @@ with tab3:
                       title="Top 10 Cities by Number of Restaurants")
     st.plotly_chart(fig_city)
 
-    city_rating = df.groupby("City")['Aggregate rating'].mean().reset_index()
-    fig_city_rating = px.bar(city_rating, x="City", y="Aggregate rating",
+    city_rating = df.groupby("City")['Delivery_person_Ratings'].mean().reset_index()
+    fig_city_rating = px.bar(city_rating, x="City", y="Delivery_person_Ratings",
                              title="Average Rating per City")
     st.plotly_chart(fig_city_rating)
 
