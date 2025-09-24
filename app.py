@@ -81,7 +81,7 @@ with tab2:
     labels={"Delivery_person_Ratings": "Kurir Ratings"},
     text_auto=True   # << ini biar muncul angkanya
 )
-st.plotly_chart(fig_rating)
+    st.plotly_chart(fig_rating)
 
 fig_time = px.histogram(
     filtered_df, 
@@ -90,7 +90,7 @@ fig_time = px.histogram(
     title="Distribusi Waktu Pengiriman (menit)",
     text_auto=True   # angka muncul di setiap bar
 )
-st.plotly_chart(fig_time)
+    st.plotly_chart(fig_time)
 
 # =========================
 # Tab 3: City Analysis
@@ -120,16 +120,16 @@ with tab4:
         st.plotly_chart(fig_orders)
 
     # Buat flag keterlambatan baru
-df['late_flag'] = df['Time_taken (min)'].apply(lambda x: 1 if x > 30 else 0)
-
-# Hitung tren persentase telat per hari
-if "Order_day" in df.columns:
-    late_trend = df.groupby("Order_day")['late_flag'].mean().reset_index()
-    late_trend['Late %'] = late_trend['late_flag'] * 100
+    df['late_flag'] = df['Time_taken (min)'].apply(lambda x: 1 if x > 30 else 0)
     
-    fig_late = px.line(late_trend, x="Order_day", y="Late %",
-                       title="Late Delivery Trend (%) by Day", text="late_flag")
-    st.plotly_chart(fig_late)
+    # Hitung tren persentase telat per hari
+    if "Order_day" in df.columns:
+        late_trend = df.groupby("Order_day")['late_flag'].mean().reset_index()
+        late_trend['Late %'] = late_trend['late_flag'] * 100
+        
+        fig_late = px.line(late_trend, x="Order_day", y="Late %",
+                           title="Late Delivery Trend (%) by Day", text="late_flag")
+        st.plotly_chart(fig_late)
 
 # =========================
 # Tab 4: Map
