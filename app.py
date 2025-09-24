@@ -116,7 +116,8 @@ with tab4:
 
     if "Order_day" in df.columns:
         daily_orders = df.groupby("Order_day").size().reset_index(name="Order Count")
-        fig_orders = px.line(daily_orders, x="Order_day", y="Order Count", title="Order Trend by Day", text="Order Count")
+        fig_orders = px.line(daily_orders, x="Order_day", y="Order Count", title="Order Trend by Day")
+    fig_orders.update_traces(mode="lines+markers")
     st.plotly_chart(fig_orders)
 
     # Buat flag keterlambatan baru
@@ -128,7 +129,8 @@ with tab4:
         late_trend['Late %'] = late_trend['late_flag'] * 100
         
         fig_late = px.line(late_trend, x="Order_day", y="Late %",
-                           title="Late Delivery Trend (%) by Day", text="late_flag")
+                           title="Late Delivery Trend (%) by Day")
+    fig_late.update_traces(mode="lines+markers")
     st.plotly_chart(fig_late)
 
 # =========================
