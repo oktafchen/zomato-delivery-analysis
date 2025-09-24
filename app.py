@@ -79,18 +79,16 @@ with tab2:
     nbins=20,
     title="Distribusi Rating Kurir",  
     labels={"Delivery_person_Ratings": "Kurir Ratings"},
-    text_auto=True   # << ini biar muncul angkanya
-)
-st.plotly_chart(fig_rating)
+    text_auto=True   # << ini biar muncul angkanya)
+    st.plotly_chart(fig_rating)
 
-fig_time = px.histogram(
+    fig_time = px.histogram(
     filtered_df, 
     x="Time_taken (min)", 
     nbins=20,
     title="Distribusi Waktu Pengiriman (menit)",
-    text_auto=True   # angka muncul di setiap bar
-)
-st.plotly_chart(fig_time)
+    text_auto=True   # angka muncul di setiap bar)
+    st.plotly_chart(fig_time)
 
 # =========================
 # Tab 3: City Analysis
@@ -107,7 +105,7 @@ with tab3:
     city_rating = df.groupby("City")['Delivery_person_Ratings'].mean().reset_index()
     fig_city_rating = px.bar(city_rating, x="City", y="Delivery_person_Ratings",
                              title="Average Rating per City", text_auto=True)
-st.plotly_chart(fig_city_rating)
+    st.plotly_chart(fig_city_rating)
 
 # Tab 4/Trends (Line Chart Order Trend & Late Delivery Trend)
 # =========================
