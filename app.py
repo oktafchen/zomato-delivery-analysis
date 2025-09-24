@@ -10,6 +10,7 @@ Original file is located at
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import pydeck as pdk
 
 # =========================
 # Load dataset
@@ -36,8 +37,8 @@ if selected_city != "All":
 # =========================
 st.title("🍽️ Zomato Insights Dashboard")
 
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["📌 Overview", "📊 EDA", "🏙️ City Analysis", "🗺️ Map"]
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    ["📌 Overview", "📊 EDA", "🏙️ City Analysis", "🚴‍♂️ Trends", "🗺️ Map"]
 )
 
 # =========================
@@ -47,6 +48,20 @@ with tab1:
     st.header("Dataset Overview")
     st.write(f"**Total Rows:** {df.shape[0]}, **Total Columns:** {df.shape[1]}")
     st.dataframe(df.head())
+
+     # === KPI Cards ===
+    col1, col2, col3, col4 = st.columns(4)
+
+    total_orders = df.shape[0]
+    avg_time = df['Time_taken (min)'].mean()
+    avg_distance = df['distance_km'].mean()
+    avg_rating = df['Delivery_person_Ratings'].mean()
+
+    col1.metric("Total Orders", f"{total_orders:,.0f}")
+    col2.metric("Avg Delivery Time", f"{avg_time:.2f} min")
+    col3.metric("Avg Distance", f"{avg_distance:.2f} km")
+    col4.metric("Avg Courier Ratings", f"{avg_rating:.2f}")
+
     st.markdown("""
     **Tentang Dashboard ini:**  
     Dashboard dibuat untuk menganalisis data restoran Zomato.  
@@ -58,16 +73,24 @@ with tab1:
 # Tab 2: EDA
 # =========================
 with tab2:
-    st.header("Exploratory Data Analysis")
-    
-    fig_rating = px.histogram(filtered_df, x="Delivery_person_Ratings", nbins=20,
-                              title="Distribusi Rating Kurir",  labels={"Delivery_person_Ratings": "Kurir Ratings"})
-    st.plotly_chart(fig_rating)
+    fig_rating = px.histogram(
+    filtered_df, 
+    x="Delivery_person_Ratings", 
+    nbins=20,
+    title="Distribusi Rating Kurir",  
+    labels={"Delivery_person_Ratings": "Kurir Ratings"},
+    text_auto=True   # << ini biar muncul angkanya
+)
+st.plotly_chart(fig_rating)
 
-    if "Time_taken (min)" in filtered_df.columns:
-        fig_time = px.histogram(filtered_df, x="Time_taken (min)", nbins=20,
-                                title="Distribusi Waktu Pengiriman (menit)")
-        st.plotly_chart(fig_time)
+fig_time = px.histogram(
+    filtered_df, 
+    x="Time_taken (min)", 
+    nbins=20,
+    title="Distribusi Waktu Pengiriman (menit)",
+    text_auto=True   # angka muncul di setiap bar
+)
+st.plotly_chart(fig_time)
 
 # =========================
 # Tab 3: City Analysis
@@ -78,18 +101,40 @@ with tab3:
     city_count = df['City'].value_counts().reset_index()
     city_count.columns = ['City', 'Restaurant Count']
     fig_city = px.bar(city_count.head(10), x="City", y="Restaurant Count",
-                      title="Top 10 Cities by Number of Restaurants")
+                      title="Top 10 Cities by Number of Restaurants", text_auto=True)
     st.plotly_chart(fig_city)
 
     city_rating = df.groupby("City")['Delivery_person_Ratings'].mean().reset_index()
     fig_city_rating = px.bar(city_rating, x="City", y="Delivery_person_Ratings",
-                             title="Average Rating per City")
+                             title="Average Rating per City", text_auto=True)
     st.plotly_chart(fig_city_rating)
+
+# Tab 4/Trends (Line Chart Order Trend & Late Delivery Trend)
+# =========================
+with tab4:
+    st.header("Order & Delivery Trends")
+
+    if "Order_day" in df.columns:
+        daily_orders = df.groupby("Order_day").size().reset_index(name="Order Count")
+        fig_orders = px.line(daily_orders, x="Order_day", y="Order Count", title="Order Trend by Day", text="Order Count")
+        st.plotly_chart(fig_orders)
+
+    # Buat flag keterlambatan baru
+df['late_flag'] = df['Time_taken (min)'].apply(lambda x: 1 if x > 30 else 0)
+
+# Hitung tren persentase telat per hari
+if "Order_day" in df.columns:
+    late_trend = df.groupby("Order_day")['late_flag'].mean().reset_index()
+    late_trend['Late %'] = late_trend['late_flag'] * 100
+    
+    fig_late = px.line(late_trend, x="Order_day", y="Late %",
+                       title="Late Delivery Trend (%) by Day", text="late_flag")
+    st.plotly_chart(fig_late)
 
 # =========================
 # Tab 4: Map
 # =========================
-with tab4:
+with tab5:
 map_df = filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna()
 map_df = map_df.rename(columns={
     'Restaurant_latitude': 'latitude',
