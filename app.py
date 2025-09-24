@@ -90,8 +90,8 @@ with tab3:
 # Tab 5: Map
 # =========================
 with tab4:
-    if "Latitude" in df.columns and "Longitude" in df.columns:
+    if "Restaurant_latitude" in df.columns and "Restaurant_longitude" in df.columns:
         st.header("Restaurant Map")
-        st.map(filtered_df[['Latitude', 'Longitude']].dropna())
+        st.map(filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna())
     else:
         st.warning("Dataset tidak memiliki kolom Latitude & Longitude.")
