@@ -87,11 +87,12 @@ with tab3:
     st.plotly_chart(fig_city_rating)
 
 # =========================
-# Tab 5: Map
+# Tab 4: Map
 # =========================
 with tab4:
-    if "Restaurant_latitude" in df.columns and "Restaurant_longitude" in df.columns:
-        st.header("Restaurant Map")
-        st.map(filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna())
-    else:
-        st.warning("Dataset tidak memiliki kolom Latitude & Longitude.")
+map_df = filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna()
+map_df = map_df.rename(columns={
+    'Restaurant_latitude': 'latitude',
+    'Restaurant_longitude': 'longitude'
+})
+st.map(map_df)
