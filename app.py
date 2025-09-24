@@ -135,9 +135,9 @@ if "Order_day" in df.columns:
 # Tab 4: Map
 # =========================
 with tab5:
-map_df = filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna()
-map_df = map_df.rename(columns={
-    'Restaurant_latitude': 'latitude',
-    'Restaurant_longitude': 'longitude'
-})
-st.map(map_df)
+    map_df = filtered_df[['Restaurant_latitude', 'Restaurant_longitude']].dropna()
+    map_df = map_df.rename(columns={
+        'Restaurant_latitude': 'latitude',
+        'Restaurant_longitude': 'longitude'
+    })
+    st.map(map_df)
