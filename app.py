@@ -79,7 +79,8 @@ with tab2:
     nbins=20,
     title="Distribusi Rating Kurir",  
     labels={"Delivery_person_Ratings": "Kurir Ratings"},
-    text_auto=True   # << ini biar muncul angkanya)
+    text_auto=True   # << ini biar muncul angkanya
+    )
     st.plotly_chart(fig_rating)
 
     fig_time = px.histogram(
@@ -87,7 +88,8 @@ with tab2:
     x="Time_taken (min)", 
     nbins=20,
     title="Distribusi Waktu Pengiriman (menit)",
-    text_auto=True   # angka muncul di setiap bar)
+    text_auto=True   # angka muncul di setiap bar
+    )
     st.plotly_chart(fig_time)
 
 # =========================
